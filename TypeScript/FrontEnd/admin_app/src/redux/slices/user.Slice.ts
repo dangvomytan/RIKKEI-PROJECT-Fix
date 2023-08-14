@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice,PayloadAction } from "@reduxjs/toolkit";
-import { IUserList, UserApi } from "../../models/User/User.Model";
+// import { IUserList, UserApi } from "../../models/User/User.Model";
 
 // get all
 export const handleGetAllUser = createAsyncThunk<IUserList[]>("user/Get all", async () => {

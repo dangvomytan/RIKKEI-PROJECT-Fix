@@ -7,8 +7,8 @@ class VersionController {
     }
 
     async version_CreateItem(req: Request, res: Response) {
-        const {product_Id, version_Name, price, inventory, image } = req.body;
-        if (!product_Id || !version_Name || !price || !inventory || !image ) {
+        const {product_Id, version_Name, price, inventory } = req.body;
+        if (!product_Id || !version_Name || !price || !inventory ) {
             res.status(400).json({ message: 'Missing required data' });
         } else {
             versionServices.createItem(req, res);

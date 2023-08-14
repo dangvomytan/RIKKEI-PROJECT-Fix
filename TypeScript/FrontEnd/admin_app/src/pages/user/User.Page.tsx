@@ -1,5 +1,5 @@
 import React from 'react'
-import UserListComponent from '../../components/UserList/UserList.Component'
+import UserListComponent from '../../components/User/UserList.Component'
 
 
 
@@ -8,5 +8,4 @@ const UserPage:React.FC = () => {
     <UserListComponent/>
   )
 }
-
 export default UserPage

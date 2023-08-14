@@ -1,5 +1,5 @@
 import React from 'react'
-import ProductListComponent from '../../components/ProductList/ProductList.Component'
+import ProductListComponent from '../../components/Produc/ProductList.Component'
 
 
 

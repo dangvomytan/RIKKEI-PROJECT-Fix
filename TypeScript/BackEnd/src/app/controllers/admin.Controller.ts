@@ -16,8 +16,8 @@ class AdminController {
     }
 
     async admin_UpdateItem(req: Request, res: Response) {
-        const { id, full_Name, user_Name, password, role } = req.body;
-        if (!id || !full_Name || !user_Name || !password || !role) {
+        const { id, full_Name, user_Name, role } = req.body;
+        if (!id || !full_Name || !user_Name ||  !role) {
             res.status(400).json({ message: 'Missing required data' });
         } else {
             adminServices.updateItem(req, res);
