@@ -1,3 +1,6 @@
-const sceretKey = "tandang"; //chu ki token
+const sceret = {
+   sceretKey: "tandang", //chu ki token  
+   sceretKeyRefresh: "tandangRefresh"
+}
 
-export  default sceretKey;
+export  default  sceret;

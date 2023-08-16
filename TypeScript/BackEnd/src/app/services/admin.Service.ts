@@ -46,7 +46,7 @@ class AdminServices {
       } else {
         await existingAdmin.update({
           full_Name: req.body.full_Name,
-          user_Name:req.body.user_Name,
+          user_Name: req.body.user_Name,
           password: req.body.password,
           role: req.body.role,
           is_Delete: 0,

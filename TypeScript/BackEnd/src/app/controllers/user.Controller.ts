@@ -11,8 +11,18 @@ class UserController {
         if (!first_Name || !last_Name || !password || !email ) {
             res.status(400).json({ message: 'Missing required data' });
         } else {
-            userServices.createItem(req, res);
+            // userServices.createItem(req, res);
         }
+    }
+
+    async user_Register(req: Request, res: Response)
+    {
+        userServices.register(req, res);
+    }
+
+    async user_Login(req: Request, res: Response)
+    {
+        userServices.login(req, res);
     }
 
     async user_UpdateItem(req: Request, res: Response) {

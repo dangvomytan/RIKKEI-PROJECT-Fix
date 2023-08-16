@@ -11,7 +11,9 @@ interface IUserAttributes{
     is_Delete:number;
 }
 // tao giao dien "Iadmin" ke thua cac phuong thuc tu Model sequelize
-export interface IUser extends Model<IUserAttributes>, IUserAttributes {}
+export interface IUser extends Model<IUserAttributes>, IUserAttributes {
+  user_Id: number;
+}
 
 const UserModel = sequelize.define<IUser>('tbl_user', {
     id: {
