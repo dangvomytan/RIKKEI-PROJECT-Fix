@@ -7,7 +7,6 @@ import VersionModel from './version.Model'
 
 interface IcartItemAttributes{
     id?: number;
-    cartItem_Id: number;
     product_Id: number;
     version_Id:number;
     quantity:number;                                                                                           
@@ -22,10 +21,6 @@ const cartItemModel = sequelize.define<IcartItem>('tbl_cartItems', {
         autoIncrement: true,
         allowNull: false,
         unique:true,
-    },
-    cartItem_Id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
     },
     product_Id: {
         type: DataTypes.INTEGER,

@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import productModel, { IProduct } from '../models/product.Model';
+import versionModel from '../models/version.Model';
+import { Op, Sequelize } from 'sequelize';
 
 class ProductServices {
   getAll = async (_req: Request, res: Response) => {
@@ -11,6 +13,24 @@ class ProductServices {
       res.status(500).send('Internal Server Error');
     }
   };
+
+  getAllProVer = async (_req: Request, res: Response) => {
+    try {
+      const result = await productModel.findAll({
+        include: [
+          {
+            model: versionModel,
+          },
+        ],
+      });
+    
+      res.status(200).json(result);
+    } catch (error: any) {
+      console.log(error.message);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+  
 
   createItem = async (req: Request, res: Response) => {
     try {

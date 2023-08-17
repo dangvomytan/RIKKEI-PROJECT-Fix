@@ -22,7 +22,7 @@ const Router = () => {
       <Route path="/" element={<MainLayout/>}>
         <Route element={<HomeComponent/>} index/>
         <Route path="product" element={<ProductListComponent/>} />
-        <Route path="detail" element={<DetailComponent/>} />
+        <Route path="product/detail" element={<DetailComponent/>} />
         <Route path="cart" element={<CartComponent/>} />
         <Route path="checkout" element={<CheckoutComponent/>} />
       </Route>

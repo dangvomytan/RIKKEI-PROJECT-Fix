@@ -6,6 +6,10 @@ class ProductController {
         productServices.getAll(req, res);
     }
 
+    async product_GetAllProVer(req: Request, res: Response) {
+        productServices.getAllProVer(req, res);
+    }
+
     async product_CreateItem(req: Request, res: Response) {
         const { category_Id, product_Name } = req.body;
         if (!category_Id || !product_Name ) {

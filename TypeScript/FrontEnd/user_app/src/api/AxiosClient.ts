@@ -24,7 +24,7 @@ const refreshToken = async () => {
 
     return res.data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 };
 
@@ -39,7 +39,7 @@ axiosClient.interceptors.request.use(
             
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const decodedToken:any = await jwtDecode(token) //giải mã token
-            console.log(decodedToken)
+            // console.log(decodedToken)
             if (decodedToken.exp < date.getTime() / 1000) { //Kiểm tra xem giờ hết hạn token vs giờ hiện tại nếu hết thì phải gọi api refresh để nhận token mới
                 const data = await refreshToken()
                 token = data

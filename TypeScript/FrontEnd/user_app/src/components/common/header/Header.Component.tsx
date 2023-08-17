@@ -14,8 +14,6 @@ const HeaderComponent: React.FC = () => {
   const userLogin: IUser | null =
     userJSON !== null ? JSON.parse(userJSON) : null;
 
-  console.log(222, userLogin);
-
   return (
     <>
       <header className="bg-gray-900 text-white">

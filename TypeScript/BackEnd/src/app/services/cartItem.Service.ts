@@ -15,7 +15,6 @@ class CartItemServices {
   createItem = async (req: Request, res: Response) => {
     try {
       const result = await cartItemModel.create({
-        cartItem_Id: req.body.cartItem_Id,
         product_Id: req.body.product_Id,
         version_Id: req.body.version_Id,
         quantity: req.body.quantity,
@@ -36,7 +35,6 @@ class CartItemServices {
         res.status(404).json({ message: 'CartItem not found' });
       } else {
         await existingCartItem.update({
-          cartItem_Id: req.body.cartItem_Id,
           product_Id: req.body.product_Id,
           version_Id: req.body.version_Id,
           quantity: req.body.quantity,
