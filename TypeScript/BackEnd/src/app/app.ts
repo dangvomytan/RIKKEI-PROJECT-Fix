@@ -15,15 +15,32 @@ import orderRouter from './routers/order.Router'
 import orderDetailRouter from './routers/orderDetail.Router'
 import cartRouter from './routers/cart.Router'
 import cartItemRouter from './routers/cartItem.Router'
+import cookieParser from 'cookie-parser';
 
 const app: Express = express();
 const router = express.Router();
 
+const corsOrigin = [
+  // 'https://nike-ten-mu.vercel.app',
+  // 'https://nike-tfgk.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:4000',
+];
+
+
 //middleware
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
-app.use(cors());
+
+const corsOptions = {
+  origin: corsOrigin,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 //Router
 app.use('/api/v1/category',categoryRouter)

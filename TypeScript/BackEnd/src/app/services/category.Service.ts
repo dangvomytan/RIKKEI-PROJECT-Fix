@@ -10,7 +10,7 @@ class categoryServices {
     try {
       const result: ICategory[] = await categoryModel.findAll();
       res.status(200).json(result)
-    } catch (error) {
+    } catch (error: any) {
       console.log(error.messege);
       res.status(500).send('Internal Server Error');
     }
@@ -39,7 +39,7 @@ class categoryServices {
       }
 
     }
-    catch (error) {
+    catch (error: any) {
       console.log(error.messege);
       res.status(500).send('Internal Server Error');
     }

@@ -7,26 +7,27 @@ class UserController {
     }
 
     async user_CreateItem(req: Request, res: Response) {
-        const { first_Name, last_Name, email, password} = req.body;
-        if (!first_Name || !last_Name || !password || !email ) {
+        const { first_Name, last_Name, email, password } = req.body;
+        if (!first_Name || !last_Name || !password || !email) {
             res.status(400).json({ message: 'Missing required data' });
         } else {
             // userServices.createItem(req, res);
         }
     }
 
-    async user_Register(req: Request, res: Response)
-    {
+    async user_Register(req: Request, res: Response) {
         userServices.register(req, res);
     }
 
-    async user_Login(req: Request, res: Response)
-    {
+    async user_Login(req: Request, res: Response) {
         userServices.login(req, res);
+    }
+    async refresh_Token(req: Request, res: Response) {
+        userServices.refreshToken(req, res);
     }
 
     async user_UpdateItem(req: Request, res: Response) {
-        const { id, first_Name, last_Name, email, password} = req.body;
+        const { id, first_Name, last_Name, email, password } = req.body;
         if (!id || !first_Name || !last_Name || !password || !email) {
             res.status(400).json({ message: 'Missing required data' });
         } else {
@@ -36,7 +37,7 @@ class UserController {
 
     async user_IsDeleteItem(req: Request, res: Response) {
         const { id } = req.body;
-        if (!id ) {
+        if (!id) {
             res.status(400).json({ message: 'Missing required data' });
         } else {
             userServices.isDeleteItem(req, res);

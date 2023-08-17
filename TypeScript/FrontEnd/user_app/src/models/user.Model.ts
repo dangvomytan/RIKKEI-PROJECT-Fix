@@ -20,7 +20,9 @@ export class UserApi {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static async login(prams:any):Promise<any> {
       const url:string = "api/v1/user/login";
-      const res = await axiosClient.post(url,prams);
+      const res = await axiosClient.post(url,prams, {
+        withCredentials: true,
+      });
       return res.data;
     }
    }

@@ -6,7 +6,7 @@ class OrderServices {
     try {
       const result: IOrder[] = await orderModel.findAll();
       res.status(200).json(result);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error.message);
       res.status(500).send('Internal Server Error');
     }
@@ -26,7 +26,7 @@ class OrderServices {
 
         res.status(201).json(result);
       }
-     catch (error) {
+     catch (error: any) {
       console.log(error.message);
       res.status(500).send('Internal Server Error');
     }

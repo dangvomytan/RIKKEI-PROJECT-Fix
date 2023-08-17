@@ -1,11 +1,21 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Header.Component.css";
+import { useSelector } from "react-redux";
+import { IUser } from "../../../models/user.Model";
 
 const HeaderComponent: React.FC = () => {
   const [userMenu, setUserMenu] = useState(false);
   const [menuToggle, setMenuToggle] = useState(false);
   const [userToggle, setUserToggle] = useState(false);
+
+  const userJSON: string | null = localStorage.getItem("userLogin");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const userLogin: IUser | null =
+    userJSON !== null ? JSON.parse(userJSON) : null;
+
+  console.log(222, userLogin);
+
   return (
     <>
       <header className="bg-gray-900 text-white">
@@ -15,23 +25,23 @@ const HeaderComponent: React.FC = () => {
               TanDang<span className="text-blue-500">Store</span>
             </Link>
           </div>
-          <div className="header-nav md:flex space-x-4 hidden">
+          <div className="header-nav md:flex space-x-4 hidden font-bold">
             <Link to="/" className="hover:text-blue-500">
-              Trang chủ
+              HOME
             </Link>
-            <Link to="/" className="hover:text-blue-500">
-              Thông tin
+            <Link to="/" className="hover:text-blue-500 font-bold">
+              ABOUTS
             </Link>
-            <Link to="/" className="hover:text-blue-500">
-              Bảo hành
+            <Link to="/" className="hover:text-blue-500 font-bold">
+              SEVICE
             </Link>
-            <Link to="/user/pages/shop.html" className="hover:text-blue-500">
-              Cửa hàng
+            <Link to="/product" className="hover:text-blue-500">
+              SHOP
             </Link>
-            <Link to="/" className="hover:text-blue-500">
-              Liên hệ
+            <Link to="/" className="hover:text-blue-500 font-bold">
+              CONTACT
             </Link>
-          </div >
+          </div>
           <div className="header-icons md:ml-4 space-x-4">
             <div
               className="menu-icon  align-middle    text-blue-500 hover:text-blue-700 cursor-pointer"
@@ -94,7 +104,10 @@ const HeaderComponent: React.FC = () => {
             </div>
             <div
               className="user-icon  flex   align-middle text-blue-500 hover:text-blue-700 cursor-pointer"
-              onClick={() => {setUserToggle(!userToggle);setUserMenu(!userMenu)}}
+              onClick={() => {
+                setUserToggle(!userToggle);
+                setUserMenu(!userMenu);
+              }}
             >
               <div className="px-1">
                 <svg
@@ -127,25 +140,35 @@ const HeaderComponent: React.FC = () => {
         </div>
       </header>
       <div className={`${userMenu ? "block" : "hidden"}`}>
-      <div className="border 1 border-black flex flex-col py-1  w-40 bor rounded absolute top-16  right-5 bg-slate-100 ">
-                <a className="hover:bg-blue-200 px-3 rounded"
-                  href="/login"
-                >
-                  Login
+        <div className="border 1 border-black flex flex-col py-1  w-40 bor rounded absolute top-16  right-5 bg-slate-100 ">
+          {userJSON !== null ? (
+            <>
+                <span className="hover:bg-blue-200 px-3 rounded font-bold">
+                  Hi, {userLogin?userLogin.first_Name:""}
+                </span>
+              <hr/>
+                <a className="hover:bg-blue-200 px-3 rounded" href="#">
+                  Profile
                 </a>
-                <a className="hover:bg-blue-200 px-3 rounded"
-                  href="/register"
-                >
-                  Register
-                </a>
-                <div className="hover:bg-blue-200 px-3 rounded"
-                  
-                >
-                  Logout
-                </div>
-          </div>
-      </div>
 
+              <hr />
+              <a className="hover:bg-blue-200 px-3 rounded" href="/login">
+                Login
+              </a>
+            </>
+          ) : (
+            <>
+              <a className="hover:bg-blue-200 px-3 rounded" href="/login">
+                Login
+              </a>
+
+              <a className="hover:bg-blue-200 px-3 rounded" href="/register">
+                Register
+              </a>
+            </>
+          )}
+        </div>
+      </div>
     </>
   );
 };

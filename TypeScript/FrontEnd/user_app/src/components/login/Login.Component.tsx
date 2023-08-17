@@ -23,7 +23,7 @@ const LoginComponent: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res = await dispatch(login(formData) as any);
+    const res = await dispatch(login(formData) as any) || null;
     // console.log(">>>>",res.payload);
     if(res.payload.accessToken)
     {

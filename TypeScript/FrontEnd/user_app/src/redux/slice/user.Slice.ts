@@ -6,7 +6,7 @@ export const login = createAsyncThunk("auth/login", async (loginData: any) => {
     try {
         const res = await UserApi.login(loginData);
         if (res.data.is_Delete === 0) {
-            localStorage.setItem("userLogin", JSON.stringify(res));
+            localStorage.setItem("userLogin", JSON.stringify(res.data));
             localStorage.setItem("accessToken", res.accessToken);
             return res;
         }

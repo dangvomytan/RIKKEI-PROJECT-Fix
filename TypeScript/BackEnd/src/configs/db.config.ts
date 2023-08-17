@@ -1,4 +1,4 @@
-import { IdbConfig } from "src/app/Types/Type";
+import { IdbConfig } from "../app/Types/Type";
 
 const dev:IdbConfig ={
     db:{

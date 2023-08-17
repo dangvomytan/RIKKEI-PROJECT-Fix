@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
 import sceret from "../../configs/jwt.config";
+import { Request, Response } from 'express';
 
 
-const checkAuthentication = (req, res, next) => {
+const checkAuthentication = (req:Request, res:Response, next:any) => {
     // Lấy phần header 'Authorization' từ request
     const authHeader = req.header('Authorization');
 
@@ -24,7 +25,7 @@ const checkAuthentication = (req, res, next) => {
         }
 
         // Lưu thông tin người dùng vào request để sử dụng ở middleware tiếp theo
-        req.user = user;
+        (req as any).user = user;
 
         // Cho phép request tiếp tục sang middleware hoặc route tiếp theo
         next();

@@ -1,10 +1,9 @@
-import React from 'react'
+import React from "react";
 
-
-const HomeComponent:React.FC = () => {
+const HomeComponent: React.FC = () => {
   return (
-    <div>Home.Component</div>
-  )
-}
+<>home</>
+  );
+};
 
-export default HomeComponent
+export default HomeComponent;

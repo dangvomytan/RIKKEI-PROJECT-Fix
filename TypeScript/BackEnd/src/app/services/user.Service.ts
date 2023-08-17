@@ -11,7 +11,7 @@ class UserServices {
     try {
       const result: IUser[] = await userModel.findAll();
       res.status(200).json(result);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error.message);
       res.status(500).send('Internal Server Error');
     }
@@ -122,40 +122,64 @@ class UserServices {
      try {
       const findUser:IUser | null = await userModel.findOne({ where: { email } });
         if (!findUser) {
-          res.status(404).json({ message: 'Email not found' });
+          return res.status(404).json({ message: 'Email not found' });
         } else {
          const myPass = await bcrypt.compare(password, findUser.password);
          if(myPass)
          {
           console.log(">>>",findUser.dataValues); //dataValues =>>> Giá trị trả về của object
           
-          const accessToken = jwt.sign(findUser.dataValues, sceret.sceretKey,{expiresIn: "60s"}); // Token hết hạn trong vòng 30s , vd thêm : 30d ,30m
+          const accessToken = jwt.sign(findUser.dataValues, sceret.sceretKey,{expiresIn: "15s"}); // Token hết hạn trong vòng 30s , vd thêm : 30d ,30m
           const accessTokenRefresh = jwt.sign(findUser.dataValues, sceret.sceretKeyRefresh,{expiresIn: "365d"}) // Tạo refreshToken để dự trữ
           refreshTokenArr.push(accessTokenRefresh)// push refresh token vào 1 mảng để lưu trữ
           const {password, ...data} = findUser.dataValues;  //loại bỏ password ra khỏi phần data trả về frontend,destructuring
           res.cookie("accessTokenRefresh",accessTokenRefresh,{//Lưu refreshToken vào cookie khi đăng nhập thành công
               httpOnly:true,
               secure:true,
-              sameSite:"strict"
+              sameSite:"none"
           })
-          res.status(200).json({
+          return res.status(200).json({
             data,
             accessToken
           })
         }
         else
         {
-          res.status(401).json({msg: "Password wrong"});
+          return res.status(401).json({msg: "Password wrong"});
         }
         }
      } catch (error) {
         console.error(error);
 
-        res.status(500).json({msg: "Server error"});
+        return res.status(500).json({msg: "Server error"});
      }
   }
+  refreshToken = async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.accessTokenRefresh;
+    console.log('REQ', req.cookies.accessTokenRefresh);
 
+    if (!refreshToken) return res.status(401).json('Unauthenticated');
+    if (!refreshTokenArr.includes(refreshToken)) {
+      return res.status(401).json('Unauthenticatedaaaa');
+    }
+    jwt.verify(refreshToken, sceret.sceretKeyRefresh, (err: any, user: any) => {
+      if (err) {
+        return res.status(400).json('refreshToken is not valid');
+      }
+      const { iat, exp, ...userOther } = user;
 
+      refreshTokenArr = refreshTokenArr.filter((token: string) => token !== refreshToken);
+      const newAccessToken = jwt.sign(userOther, sceret.sceretKey, { expiresIn: '15s' });
+      const newRefreshToken = jwt.sign(userOther, sceret.sceretKeyRefresh, { expiresIn: '365d' });
+      refreshTokenArr.push(newRefreshToken);
+      res.cookie('accessTokenRefresh', newRefreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      });
+      return res.status(200).json(newAccessToken);
+    });
+  };
 }
 
 export default new UserServices();

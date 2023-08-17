@@ -6,7 +6,7 @@ class ProductServices {
     try {
       const result: IProduct[] = await productModel.findAll();
       res.status(200).json(result);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error.message);
       res.status(500).send('Internal Server Error');
     }
@@ -30,7 +30,7 @@ class ProductServices {
 
         res.status(201).json(result);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error.message);
       res.status(500).send('Internal Server Error');
     }
