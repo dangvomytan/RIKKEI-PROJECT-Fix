@@ -45,8 +45,8 @@ axiosClient.interceptors.request.use(
                 token = data
             }
         } catch (err) {
-            console.log(err);
-            
+            // console.log(err);
+
         }
 
         if (token !== null) config.headers.Authorization = `Bearer ${token}`;

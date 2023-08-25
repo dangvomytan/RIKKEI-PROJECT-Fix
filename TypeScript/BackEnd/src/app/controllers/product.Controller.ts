@@ -36,6 +36,13 @@ class ProductController {
             productServices.isDeleteItem(req, res);
         }
     }
+
+
+    //fix
+
+    async product_GetAllInfoProByIdVer(req: Request, res: Response) {
+        productServices.getAllInfoProByIdVer(req, res);
+    }
 }
 
 export default new ProductController();

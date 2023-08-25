@@ -1,3 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital@1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geostar+Fill&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+body
+{
+    margin: 0;
+    padding: 0;
+    background-color: #dfe6e9;
+    font-family: 'Roboto', sans-serif;
+}
+.Logo
+{
+    font-family: 'Geostar Fill', cursive;
+}
+.bg_color
+{
+    background-color: #222;
+}
+.t_color
+{
+    color: #aaa;
+}

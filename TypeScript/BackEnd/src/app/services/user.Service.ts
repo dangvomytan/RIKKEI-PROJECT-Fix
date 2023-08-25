@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import sceret from '../../configs/jwt.config';
 import bcrypt from 'bcryptjs';
 import cartModel from '../models/cart.Model';
+import { Console } from 'console';
+import UserModel from '../models/user.Model';
+import { Model } from 'sequelize';
 let refreshTokenArr:any[] = []
 
 class UserServices {
@@ -16,6 +19,24 @@ class UserServices {
       res.status(500).send('Internal Server Error');
     }
   };
+  // getUserByIdUser = async (req: Request, res: Response) => {
+  //   const id:any = req.params.user_Id;
+  //   try
+  //   {
+  //      const user = await UserModel.findOne({
+  //       include:[
+  //         model:cartModel
+  //       ],
+  //       where
+  //      })
+  //   }
+  //   catch(err)
+  //   {
+  //     console.log(err);
+  //     res.status(500).json({msg:"Server error"})
+  //   }
+  // }
+
 
   // createItem = async (req: Request, res: Response) => {
   //   try {
@@ -45,7 +66,8 @@ class UserServices {
     const { email, password } = req.body;
     try {
       // Kiểm tra xem email đã tồn tại chưa
-      const checkEmail = await userModel.findOne({ where: { email } });
+      const checkEmail = await userModel.findOne({ where: { email } 
+      });
       if (checkEmail) {
         res.status(400).json({ message: 'Email already exists' });
       }
@@ -71,7 +93,7 @@ class UserServices {
         }
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Lỗi máy chủ nội bộ' });
+      res.status(500).json({ message: 'Error server' });
     }
   };
 
@@ -114,22 +136,27 @@ class UserServices {
     }
   };
 
-
+  // dang nhap co tinh thoi gian phien lam viec
   login = async (req: Request, res: Response) => {
 
     const { email, password } = req.body;
     console.log(email);
      try {
-      const findUser:IUser | null = await userModel.findOne({ where: { email } });
+      const findUser:IUser | null = await userModel.findOne({
+         where: { email },
+         include:{
+           model:cartModel
+          }
+         });
         if (!findUser) {
           return res.status(404).json({ message: 'Email not found' });
-        } else {
-         const myPass = await bcrypt.compare(password, findUser.password);
+        } else {//tìm thấyy user
+         const myPass = await bcrypt.compare(password, findUser.password); // giải mã pas
          if(myPass)
          {
-          console.log(">>>",findUser.dataValues); //dataValues =>>> Giá trị trả về của object
-          
-          const accessToken = jwt.sign(findUser.dataValues, sceret.sceretKey,{expiresIn: "15s"}); // Token hết hạn trong vòng 30s , vd thêm : 30d ,30m
+          // console.log(">>>",findUser.dataValues); //dataValues =>>> Giá trị trả về của object
+          //tạo access token
+          const accessToken = jwt.sign(findUser.dataValues, sceret.sceretKey,{expiresIn: "7d"}); // Token hết hạn trong vòng 30s , vd thêm : 30d ,30m
           const accessTokenRefresh = jwt.sign(findUser.dataValues, sceret.sceretKeyRefresh,{expiresIn: "365d"}) // Tạo refreshToken để dự trữ
           refreshTokenArr.push(accessTokenRefresh)// push refresh token vào 1 mảng để lưu trữ
           const {password, ...data} = findUser.dataValues;  //loại bỏ password ra khỏi phần data trả về frontend,destructuring
@@ -154,6 +181,8 @@ class UserServices {
         return res.status(500).json({msg: "Server error"});
      }
   }
+
+
   refreshToken = async (req: Request, res: Response) => {
     const refreshToken = req.cookies.accessTokenRefresh;
     console.log('REQ', req.cookies.accessTokenRefresh);

@@ -8,9 +8,10 @@ WHERE v.id = (
 );
 
 SELECT 
-   *
+*
 FROM tbl_products 
-WHERE tbl_versions.id = (
+INNER JOIN tbl_versions  ON tbl_products.id = v.product_Id
+WHERE v.id = (
     SELECT MIN(id)
     FROM tbl_versions
     WHERE product_Id = tbl_products.id

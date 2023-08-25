@@ -7,9 +7,10 @@ import VersionModel from './version.Model'
 
 interface IcartItemAttributes{
     id?: number;
-    product_Id: number;
-    version_Id:number;
-    quantity:number;                                                                                           
+    cart_Id?:number;
+    product_Id?: number;
+    version_Id?:number;
+    quantity?:number;                                                                                           
 }
 // tao giao dien "Iadmin" ke thua cac phuong thuc tu Model sequelize
 export interface IcartItem extends Model<IcartItemAttributes>, IcartItemAttributes {}
@@ -21,6 +22,10 @@ const cartItemModel = sequelize.define<IcartItem>('tbl_cartItems', {
         autoIncrement: true,
         allowNull: false,
         unique:true,
+    },
+    cart_Id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
     product_Id: {
         type: DataTypes.INTEGER,
@@ -40,8 +45,10 @@ const cartItemModel = sequelize.define<IcartItem>('tbl_cartItems', {
 });
 cartItemModel.belongsTo(CartModel, { foreignKey: 'cart_Id', onDelete: 'CASCADE',onUpdate: 'CASCADE'  });
 CartModel.hasMany(cartItemModel,{ foreignKey: 'cart_Id'});
+
 cartItemModel.belongsTo(ProductModel, { foreignKey: 'product_Id', onDelete: 'CASCADE',onUpdate: 'CASCADE'  });
 ProductModel.hasMany(cartItemModel,{ foreignKey: 'product_Id'});
+
 cartItemModel.belongsTo(VersionModel, { foreignKey: 'version_Id', onDelete: 'CASCADE',onUpdate: 'CASCADE'  });
 VersionModel.hasOne(cartItemModel,{ foreignKey: 'version_Id'});
 

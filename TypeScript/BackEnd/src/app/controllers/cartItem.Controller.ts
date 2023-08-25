@@ -2,21 +2,21 @@ import { Response, Request } from 'express';
 import cartItemServices from '../services/cartItem.Service';
 
 class cartItemController {
-    async cartItem_GetAll(req: Request, res: Response) {
-        cartItemServices.getAll(req, res);
+    async cartItem_AddToCart(req: Request, res: Response) {
+        cartItemServices.addToCart(req, res);
     }
 
-    async cartItem_CreateItem(req: Request, res: Response) {
-        cartItemServices.createItem(req, res);
+    async cartItem_GetCartItemByCart(req: Request, res: Response) {
+        cartItemServices.getCartItemByCart(req, res);
     }
 
-    async cartItem_UpdateItem(req: Request, res: Response) {
-        cartItemServices.updateItem(req, res);
+    async cartItem_DeleteCartItemByID(req: Request, res: Response) {
+        cartItemServices.deleteCartItemByID(req, res);
     }
-
-    async cartItem_DeleteItem(req: Request, res: Response) {
-        cartItemServices.DeleteItem(req, res);
+    async cartItem_UpdateQuantityCartitemById(req: Request, res: Response) {
+        cartItemServices.updateQuantityCartitemById(req, res);
     }
+    
 }
 
 export default new cartItemController();

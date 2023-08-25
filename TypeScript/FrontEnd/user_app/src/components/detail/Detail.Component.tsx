@@ -1,190 +1,248 @@
-import React, { useEffect, useState } from "react";
-import { IProduct, ProductApi } from "../../models/product.Component";
-import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { IProduct, Product, ProductApi } from "../../models/product.Model";
+import { cartItemApi } from "../../models/cartItem.Model";
 import { Toaster, toast } from "react-hot-toast";
 import { IUser } from "../../models/user.Model";
+
 const DetailComponent: React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [productApi, setProductApi] = useState<any[]>([]);
-  const [quantity, setquantity] = useState(1);
-  const [indexVer, setIndexVer] = useState(0);
-  const navigate = useNavigate();
+    const [dataApi, setDataApi] = useState<IProduct>({});
+    const [changeVer, setChangeVer] = useState<Product>();
+    const [quantity, setquantity] = useState(1);
 
-  const location = useLocation();
-  const { search } = queryString.parse(location.search);
-  const id = search || null;
+    //dùng Uselocation để lấy id từ url
+    const location = useLocation();
+    const { search } = queryString.parse(location.search);
+    const id = search || null;
 
-  const handleCallData = async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const DataApi: any = (await ProductApi.getAllProVer()) || null;
-    // console.log(DataApi);
-    setProductApi(
-      DataApi.filter(
-        (item: IProduct) => item.is_Delete === 0 && item.id == Number(id)
-      )
-    );
-  };
-  useEffect(() => {
-    handleCallData();
-  }, []);
+    //handle lấy API product
+    const handleCallData = async () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const DataApi: any = await ProductApi.getAllInfoProductById(Number(id)) || null;
+        // console.log(111, DataApi);
+        setDataApi(DataApi.is_Delete === 0 ? DataApi : null);
+        setChangeVer(DataApi.is_Delete === 0 ? DataApi : null)
+    };
+    useEffect(() => {
+        handleCallData();
+    }, [] || id);
+    // tang qty
+    const handleIncrease = () => {
+        if (quantity >= 0) {
+            const newQuantity = Number(quantity) + 1;
+            setquantity(newQuantity);
+        }
+    };
 
-  // tang qty
-  const handleIncrease = () => {
-    if (quantity >= 0) {
-      const newQuantity = Number(quantity) + 1;
-      setquantity(newQuantity);
+    // giam qty
+    const handleReduce = () => {
+        if (quantity > 1) {
+            const newQuantity = Number(quantity) - 1;
+            setquantity(newQuantity);
+        }
     }
-  };
 
-  // giam qty
-  const handleReduce = () => {
-    if (quantity > 0) {
-      const newQuantity = Number(quantity) - 1;
-      setquantity(newQuantity);
+    //
+    const clickChangeVer = (ver: Product) => {
+        setChangeVer(ver);
     }
-  };
-  // chon phien bang
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handlechangeVer = (ver: any) => {
-    setIndexVer(ver);
-  };
 
-  const handleClickGoToCart = () => {
-    navigate("/cart");
-  };
-  //Cick add to cart
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleClickAddtoCart = async (pro_id: any, ver_id:any ) => {
-    const userJSON: string | null = localStorage.getItem("userLogin");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const userLogin: IUser | null =
-      userJSON !== null ? JSON.parse(userJSON) : null;
-      console.log(userLogin);
-      
-    // const cartItem = {
-    //   id_version: version?.id,
-    //   id_cart:customer?.id ,
-    //   quantity: quantity,
-    // }
-    // console.log(222,item);
-    try {
-      console.log(pro_id,ver_id);
-      // await dispatch(AddToCart(item)).unwrap();
-      const notify = () => toast.success("Successfully");
-      notify();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error:any) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      console.log(error.message);
-      const notify = () => toast.error(error.message);
-      notify();
+    const clickAddToCart = async (product: any) => {
+        const userLogin: IUser | null = JSON.parse(localStorage.getItem('userLogin') || 'null');
+        if (userLogin !== null) {
+            const cart_Id = userLogin.tbl_cart.id;
+            const item = {
+                cart_Id: Number(cart_Id),
+                product_Id: product.product_Id,
+                version_Id: product.id,
+                quantity: quantity
+            }
+            try {
+                await cartItemApi.addToCart(item)
+                const notify = () => toast.success("Add to cart successfully");
+                notify();
+            }
+            catch (error: any) {
+                console.log(error.message);
+                const notify = () => toast.error(error.message);
+                notify();
+            }
+
+        }
+        else {
+            const notify = () => toast.error("Please login first");
+            notify();
+        }
+
     }
-  };
-  return (
-    <div>
-      <Toaster position="bottom-right" reverseOrder={false} />
-      <div className="bg-slate-200">
-        <div className="mx-auto max-w-xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-5xl lg:px-8">
-          {/* <h2 className="sr-only">Products</h2> */}
-          {productApi.length > 0 &&
-            productApi.map((ver) => {
-              return (
-                <div
-                  className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4  "
-                  key={ver.id}
-                >
-                  <div className="col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-1 rounded-lg   ">
-                    <div className="detail_image">
-                      <img
-                        src={ver.tbl_versions[indexVer].image}
-                        className="w-full h-full rounded-lg  object-cover object-center"
-                      />
-                    </div>
-                  </div>
-                  <div className="col-span-3 sm:col-span-3 md:col-span-2 lg:col-span-2 ">
-                    <div className="detail_header">
-                      <h3 className="font-bold text-2xl uppercase">
-                        {ver.product_Name}
-                      </h3>
-                    </div>
-                    <div className="detail_body">
-                      {/* <div className='detail_brand'><b>Thương hiệu:</b> DJI</div> */}
-                      <div className="text-xl">
-                        <b>Ver: {ver.tbl_versions[indexVer].version_Name}</b>
-                      </div>
-                      <div className="detail_dev"> {ver.description}</div>
-                      <div className="detail_price text-xl text-red-500 font-bold my-2">
-                        $ {ver.tbl_versions[indexVer].price}
-                      </div>
-                      <div className="detail_quantity">
-                        <div className="detail_qty_box flex items-center text-center gap-2">
-                          <div
-                            className="btn_qty cursor-pointer text-2xl py-1 px-4 border-2 border-gray-400 hover:border-blue-500  text-black  rounded-md"
-                            onClick={() => handleIncrease()}
-                          >
-                            +
-                          </div>
-                          <div className="btn_qty text-2xl py-1 px-8 border-2 border-gray-400 bg-white rounded-md">
-                            {quantity}
-                          </div>
-                          <div
-                            className="btn_qty cursor-pointer text-2xl py-1 px-4 border-2 border-gray-400 hover:border-blue-500  text-black  rounded-md"
-                            onClick={() => handleReduce()}
-                          >
-                            -
-                          </div>
+
+    return (
+        <section className="overflow-hidden bg-white py-11 font-poppins dark:bg-gray-800">
+            <div>
+                <Toaster
+                    position="bottom-right"
+                    reverseOrder={false}
+                />
+            </div>
+            <div className="max-w-5xl px-4 py-4 mx-auto lg:py-8 md:px-6">
+                <div className="flex flex-wrap -mx-4">
+                    <div className="w-full mb-8 md:w-1/2 md:mb-0">
+                        <div className="sticky top-0 z-0 overflow-hidden ">
+                            <div className="relative mb-6 lg:mb-10 lg:h-2/4 ">
+                                <img src={changeVer?.image} alt=""
+                                    className="object-cover w-full lg:h-full " />
+                            </div>
+                            <div className="flex-wrap hidden md:flex ">
+                                {/* <div className="w-1/2 p-2 sm:w-1/4">
+                                    <a href="#" className="block border border-orange-300 hover:border-orange-300">
+                                        <img src="https://i.postimg.cc/6qcPhTQg/R-18.png" alt=""
+                                            className="object-cover w-full lg:h-20"/>
+                                    </a>
+                                </div>
+                                <div className="w-1/2 p-2 sm:w-1/4">
+                                    <a href="#" className="block border border-transparent hover:border-orange-300">
+                                        <img src="https://i.postimg.cc/6qcPhTQg/R-18.png" alt=""
+                                            className="object-cover w-full lg:h-20"/>
+                                    </a>
+                                </div>
+                                <div className="w-1/2 p-2 sm:w-1/4">
+                                    <a href="#" className="block border border-transparent hover:border-orange-300">
+                                        <img src="https://i.postimg.cc/6qcPhTQg/R-18.png" alt=""
+                                            className="object-cover w-full lg:h-20"/>
+                                    </a>
+                                </div>
+                                <div className="w-1/2 p-2 sm:w-1/4">
+                                    <a href="#" className="block border border-transparent hover:border-orange-300">
+                                        <img src="https://i.postimg.cc/6qcPhTQg/R-18.png" alt=""
+                                            className="object-cover w-full lg:h-20"/>
+                                    </a>
+                                </div> */}
+                            </div>
+                            <div className="px-6 pb-6 mt-6 border-t border-gray-300 dark:border-gray-400 ">
+                                <div className="flex flex-wrap items-center mt-6">
+                                    <span className="mr-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                            className="w-4 h-4 text-gray-700 dark:text-gray-400 bi bi-truck"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                    <h2 className="text-lg font-bold text-gray-700 dark:text-gray-400">Free Shipping</h2>
+                                </div>
+                                <div className="mt-2 px-7">
+                                    <a className="text-sm text-orange-400 dark:text-orange-200" href="#">Get delivery dates</a>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                      <div className="detail_sub flex gap-4 my-2">
-                        <button
-                          className="btn_submit text-2xl py-2 px-8 border-2 border-blue-400 bg-blue-400 hover:bg-blue-500 text-white p-4 rounded-md "
-                          onClick={() =>
-                            handleClickAddtoCart(ver.id,ver.tbl_versions[indexVer].id)
-                          }
-                        >
-                          Thêm vào giỏ hàng
-                        </button>
-                        <button
-                          className="btn_submit text-2xl py-2 px-8 border-2  border-blue-400 bg-blue-400  hover:bg-blue-500 text-white rounded-md "
-                          onClick={() => handleClickGoToCart()}
-                        >
-                          Đi đến giỏ hàng
-                        </button>
-                      </div>
-                      <div>
-                        <div>
-                          <b>Lựa chọn phiên bản:</b>
-                        </div>
-                        <div className="ver_box flex gap-1 my-2">
-                          {
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            ver.tbl_versions.length > 0 &&
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              ver.tbl_versions.map((item: any, index: any) => {
-                                return (
-                                  <div
-                                    className="btn_ver py-1 px-4 border-2  rounded-md   border-gray-400 bg-white hover:border-blue-500  text-black"
-                                    key={item.id}
-                                    onClick={() => handlechangeVer(index)}
-                                  >
-                                    {item.version_Name}
-                                  </div>
-                                );
-                              })
-                          }
-                        </div>
-                      </div>
                     </div>
-                  </div>
-                  {/* <div className='grid-item-3'>3 </div> */}
+                    <div className="w-full px-4 md:w-1/2 ">
+                        <div className="lg:pl-20">
+                            <div className="mb-8 ">
+
+                                <h3 className="max-w-xl mb-6 text-2xl font-bold dark:text-gray-400 md:text-4xl">
+                                    {dataApi != null ? dataApi.product?.product_Name : null} {changeVer?.version_Name}
+                                </h3>
+                                <p className="inline-block mb-6 text-4xl font-bold text-gray-700 dark:text-gray-400 ">
+                                    <span>${changeVer?.price}</span>
+                                    {/* <span className="text-base font-normal text-gray-500 line-through dark:text-gray-400">$1800.99</span> */}
+                                </p>
+                                <p className="max-w-md text-gray-700 dark:text-gray-400">
+                                    {/* {dataApi.description} */}
+                                </p>
+                            </div>
+                            {/* <div className="mb-8">
+                                <h2
+                                    className="w-16 pb-1 mb-4 text-2xl font-bold border-b border-orange-300 dark:text-gray-400 dark:border-gray-600">
+                                    Colors</h2>
+                                <div className="flex flex-wrap -mx-2 -mb-2">
+                                    <button className="p-1 mb-2 mr-3 ">
+                                        <div className="w-6 h-6 rounded-full bg-stone-400"></div>
+                                    </button>
+                                    <button className="p-1 mb-2 mr-3 ">
+                                        <div className="w-6 h-6 bg-gray-700 rounded-full"></div>
+                                    </button>
+                                    <button className="p-1 mb-2 ">
+                                        <div className="w-6 h-6 bg-orange-200 rounded-full"></div>
+                                    </button>
+                                </div>
+                            </div>  */}
+                            <div className="mb-8 ">
+                                <h4 className="w-16 pb-1 mb-4 text-xl font-semibold border-b border-orange-300 dark:border-gray-600 dark:text-gray-400">
+                                    Ver:</h4>
+                                <div>
+                                    <div className="flex flex-wrap -mb-2">
+                                        {dataApi != null && dataApi.product?.tbl_versions ?
+                                            dataApi.product.tbl_versions.map((ver) => (
+                                                <button key={ver.id}
+                                                    onClick={() => clickChangeVer(ver)}
+                                                    className="px-4 py-2 mb-2 mr-4 font-semibold border rounded-md hover:border-orange-400 dark:border-gray-400 hover:text-orange-600 dark:hover:border-gray-300 dark:text-gray-400">
+                                                    {ver.version_Name}
+                                                </button>
+                                            ))
+                                            : null}
+                                    </div>
+                                </div>
+                            </div>
+                            {/* <div className="mb-8">
+                            <h2
+                                className="w-16 pb-1 mb-6 text-xl font-semibold border-b border-orange-300 dark:border-gray-600 dark:text-gray-400">
+                                Storage</h2>
+                            <div>
+                                <div className="flex flex-wrap -mx-2 -mb-2">
+                                    <button
+                                        className="px-4 py-2 mb-2 mr-4 font-semibold border rounded-md hover:border-orange-400 dark:border-gray-400 hover:text-orange-600 dark:hover:border-gray-300 dark:text-gray-400">
+                                        256 GB
+                                    </button>
+                                    <button
+                                        className="px-4 py-2 mb-2 mr-4 font-semibold border rounded-md hover:border-orange-400 hover:text-orange-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400">
+                                        112 GB
+                                    </button>
+                                    <button
+                                        className="px-4 py-2 mb-2 mr-2 font-semibold border rounded-md hover:border-orange-400 hover:text-orange-600 dark:border-gray-400 dark:hover:border-gray-300 dark:text-gray-400">
+                                        1 TB
+                                    </button>
+                                </div>
+                            </div>
+                        </div>  */}
+                            <div className="w-32 mb-8 ">
+                                <label
+                                    className="w-full pb-1 text-xl font-semibold text-gray-700 border-b border-orange-300 dark:border-gray-600 dark:text-gray-400">Quantity</label>
+                                <div className="relative flex flex-row w-full h-10 mt-6 bg-transparent rounded-lg">
+                                    <button
+                                        onClick={() => handleReduce()}
+                                        className="w-20 h-full text-gray-600 bg-gray-300 rounded-l outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-700 dark:bg-gray-900 hover:bg-gray-400">
+                                        <span className="m-auto text-2xl font-thin">-</span>
+                                    </button>
+                                    <input type="number" readOnly
+                                        className="flex items-center w-full font-semibold text-center text-gray-700 placeholder-gray-700 bg-gray-300 outline-none dark:text-gray-400 dark:placeholder-gray-400 dark:bg-gray-900 focus:outline-none text-md hover:text-black"
+                                        value={quantity}
+                                    />
+                                    <button
+                                        onClick={() => handleIncrease()}
+                                        className="w-20 h-full text-gray-600 bg-gray-300 rounded-r outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-400">
+                                        <span className="m-auto text-2xl font-thin">+</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-4">
+                                <button
+                                    onClick={() => clickAddToCart(changeVer)}
+                                    className="w-full p-4 bg-orange-500 rounded-md lg:w-2/5 dark:text-gray-200 text-gray-50 hover:bg-orange-600 dark:bg-orange-500 dark:hover:bg-orange-700">
+                                    Add to cart</button>
+                                <button
+                                    className="flex items-center justify-center w-full p-4 text-orange-500 border border-orange-500 rounded-md lg:w-2/5 dark:text-gray-200 dark:border-orange-600 hover:bg-orange-600 hover:border-orange-600 hover:text-gray-100 dark:bg-orange-500 dark:hover:bg-orange-700 dark:hover:border-orange-700 dark:hover:text-gray-300">
+                                    Buy Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              );
-            })}
-        </div>
-      </div>
-    </div>
-  );
+            </div>
+        </section>
+    );
 };
 
 export default DetailComponent;

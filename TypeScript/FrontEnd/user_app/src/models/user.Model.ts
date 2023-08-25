@@ -3,10 +3,11 @@ import axiosClient from "../api/AxiosClient";
 
 export interface IUser
 {
+    tbl_cart: any;
     first_Name?: string;
     last_Name?:string;
     email?:string;
-    password?:string;                                                                                             
+    password?:string;                                                                                          
 }
 
 export class UserApi {

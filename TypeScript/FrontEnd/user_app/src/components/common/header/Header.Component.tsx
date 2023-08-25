@@ -1,174 +1,63 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "./Header.Component.css";
-import { useSelector } from "react-redux";
-import { IUser } from "../../../models/user.Model";
+import React, { useEffect, useState } from "react";
+// import "./Header.Component.css";
+
+
 
 const HeaderComponent: React.FC = () => {
-  const [userMenu, setUserMenu] = useState(false);
-  const [menuToggle, setMenuToggle] = useState(false);
-  const [userToggle, setUserToggle] = useState(false);
-
-  const userJSON: string | null = localStorage.getItem("userLogin");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const userLogin: IUser | null =
-    userJSON !== null ? JSON.parse(userJSON) : null;
-
+  
   return (
-    <>
-      <header className="bg-gray-900 text-white">
-        <div className="container mx-auto p-4 flex justify-between items-center">
-          <div className="header-logo text-2xl font-semibold">
-            <Link to="/">
-              TanDang<span className="text-blue-500">Store</span>
-            </Link>
-          </div>
-          <div className="header-nav md:flex space-x-4 hidden font-bold">
-            <Link to="/" className="hover:text-blue-500">
-              HOME
-            </Link>
-            <Link to="/" className="hover:text-blue-500 font-bold">
-              ABOUTS
-            </Link>
-            <Link to="/" className="hover:text-blue-500 font-bold">
-              SEVICE
-            </Link>
-            <Link to="/product" className="hover:text-blue-500">
-              SHOP
-            </Link>
-            <Link to="/" className="hover:text-blue-500 font-bold">
-              CONTACT
-            </Link>
-          </div>
-          <div className="header-icons md:ml-4 space-x-4">
-            <div
-              className="menu-icon  align-middle    text-blue-500 hover:text-blue-700 cursor-pointer"
-              onClick={() => setMenuToggle(!menuToggle)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                className="w-9 h-9"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
-                />
-              </svg>
+    <header className="grid sticky  place-items-center w-screen top-0 z-50">
+      <div className="min-w-full  bg_color"> {/*border 1 border-collapse border-blue-400 */}
+        <div className=" max-w-6xl mx-auto px-6 py-0 bg_color rounded-sm ">
+          <div className="flex justify-between">
+            <div className="flex items-center">
+              <h1 className="Logo text-3xl t_color">TD-Store</h1>
             </div>
-            <a
-              href="./user/pages/search.html"
-              className="text-blue-500 hover:text-blue-700"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                className="w-9 h-9"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                />
-              </svg>
-            </a>
-            <div className="user-icon  flex   align-middle text-blue-500 hover:text-blue-700 cursor-pointer">
-              <div className="px-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  className="w-9 h-9"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                  />
-                </svg>
-              </div>
-              {/* <div className="px-1">
-                <span>(1)</span>
-              </div> */}
-            </div>
-            <div
-              className="user-icon  flex   align-middle text-blue-500 hover:text-blue-700 cursor-pointer"
-              onClick={() => {
-                setUserToggle(!userToggle);
-                setUserMenu(!userMenu);
-              }}
-            >
-              <div className="px-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  className="w-9 h-9  m-auto"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-              </div>
-              {/* <div className="px-1">
-                <span>Tan Dang</span>
-              </div> */}
-            </div>
-          </div>
-        </div>
-        <div className={`md:hidden ${menuToggle ? "block" : "hidden"}`}>
-          {/* Mobile Menu Content */}
-        </div>
-        <div className={`md:hidden ${userToggle ? "block" : "hidden"}`}>
-          asdas
-          {/* Mobile User Menu Content */}
-        </div>
-      </header>
-      <div className={`${userMenu ? "block" : "hidden"}`}>
-        <div className="border 1 border-black flex flex-col py-1  w-40 bor rounded absolute top-16  right-5 bg-slate-100 ">
-          {userJSON !== null ? (
-            <>
-                <span className="hover:bg-blue-200 px-3 rounded font-bold">
-                  Hi, {userLogin?userLogin.first_Name:""}
-                </span>
-              <hr/>
-                <a className="hover:bg-blue-200 px-3 rounded" href="#">
-                  Profile
+            <div className="flex p-3">
+              <ul className="flex gap-14 items-center  uppercase t_color ">
+                <li><a href="/">
+                   Home
                 </a>
+                 </li>
+                <li><a href="/product">
+                  Shop
+                </a>
+                  </li>
+                <li>About</li>
+                <li>Contact</li>
+              </ul>
+              <div className=" flex gap-5 justify-around ml-14 t_color">
+                <div>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                    <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                    <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
+                  </svg>
+                  <div className="absolute top-4  left-7 z-40 text-xs text-red-500">
+                    (0)
+                  </div>
+                </div>
+                <div className="relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                    <path fillRule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clipRule="evenodd" />
+                  </svg>
+                  <div className="absolute w-2 h-2 top-5 right-1 z-40 bg-green-500 rounded-full"></div>
+                </div>
 
-              <hr />
-              <a className="hover:bg-blue-200 px-3 rounded" href="/login">
-                Login
-              </a>
-            </>
-          ) : (
-            <>
-              <a className="hover:bg-blue-200 px-3 rounded" href="/login">
-                Login
-              </a>
-
-              <a className="hover:bg-blue-200 px-3 rounded" href="/register">
-                Register
-              </a>
-            </>
-          )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </>
+    </header>
   );
 };
 
 export default HeaderComponent;
+function handleCallData() {
+  throw new Error("Function not implemented.");
+}
+

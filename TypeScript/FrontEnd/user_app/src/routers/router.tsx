@@ -4,7 +4,7 @@ import RegisterComponent from "../components/register/Register.Component";
 import LoginComponent from "../components/login/Login.Component";
 import NotFoundPage from "../pages/notFound/NotFound.Page";
 import HomeComponent from "../components/home/Home.Component";
-import ProductListComponent from "../components/productList/productList.Component";
+import ProductListComponent from "../components/Products/productList/productList.Component";
 import MainLayout from "../layouts/main/main.Layout";
 import RequireLogin from "../middleware/RequireLogin/RequireLogin";
 import DetailComponent from "../components/detail/Detail.Component";

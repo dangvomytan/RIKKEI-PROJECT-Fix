@@ -1,42 +1,46 @@
 import { Request, Response } from 'express';
 import cartItemModel, { IcartItem } from '../models/cartItem.Model';
+import productModel from '../models/product.Model';
+import { where } from 'sequelize';
+import VersionModel from '../models/version.Model';
 
 class CartItemServices {
-  getAll = async (_req: Request, res: Response) => {
+
+  addToCart = async (req: Request, res: Response) => {
+    console.log(req.body);
+    
+    const { cart_Id, product_Id, version_Id, quantity } = req.body;
     try {
-      const result: IcartItem[] = await cartItemModel.findAll();
-      res.status(200).json(result);
-    } catch (error:any) {
+      const checkItem = await cartItemModel.findOne({ where: { version_Id } });
+      if (!checkItem) {
+        const result: IcartItem = await cartItemModel.create({
+          cart_Id: cart_Id,
+          product_Id: product_Id,
+          version_Id: version_Id,
+          quantity: quantity,
+        });
+        res.status(201).json(result);
+      }  
+      else
+      {
+        checkItem.quantity = Number(checkItem.quantity) + Number(quantity);   
+        await checkItem.save();   
+        res.status(200).json({ message: 'Updated successfully!' });
+      }
+    } catch (error: any) {
       console.log(error.message);
       res.status(500).send('Internal Server Error');
     }
   };
 
-  createItem = async (req: Request, res: Response) => {
+  updateQuantityCartitemById = async (req: Request, res: Response) => {
+    const id =req.params.id;
     try {
-      const result = await cartItemModel.create({
-        product_Id: req.body.product_Id,
-        version_Id: req.body.version_Id,
-        quantity: req.body.quantity,
-      });
-
-      res.status(201).json(result);
-    } catch (error:any) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
-    }
-  };
-
-  updateItem = async (req: Request, res: Response) => {
-    try {
-      const existingCartItem: IcartItem | null = await cartItemModel.findByPk(req.body.id);
-
+      const existingCartItem: IcartItem | null = await cartItemModel.findByPk(id);
       if (!existingCartItem) {
         res.status(404).json({ message: 'CartItem not found' });
       } else {
         await existingCartItem.update({
-          product_Id: req.body.product_Id,
-          version_Id: req.body.version_Id,
           quantity: req.body.quantity,
         });
 
@@ -48,22 +52,39 @@ class CartItemServices {
     }
   };
 
-  DeleteItem = async (req: Request, res: Response) => {
+  getCartItemByCart = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    
     try {
-        const existingCartItem: IcartItem | null = await cartItemModel.findByPk(req.body.id);
-  
-        if (!existingCartItem) {
-          res.status(404).json({ message: 'CartItem not found' });
-        } else {
-          await existingCartItem.destroy();
-  
-          res.status(200).json({ message: 'CartItem deleted successfully', cartItem: existingCartItem });
-        }
-      } catch (error) {
-        console.error('Error deleting CartItem:', error);
-        res.status(500).json({ message: 'Error deleting CartItem' });
+      const cart: IcartItem[] = await cartItemModel.findAll({
+        where:{cart_Id:id},
+        include: [{model: productModel},{model: VersionModel}],
+      });
+      res.status(200).json(cart);
+    } catch (error: any) {
+      console.log(error.message);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+
+  deleteCartItemByID = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    try {
+      const existingCartItem: IcartItem | null = await cartItemModel.findByPk(id);
+
+      if (!existingCartItem) {
+        res.status(404).json({ message: 'CartItem not found' });
+      } else {
+        await existingCartItem.destroy();
+
+        res.status(200).json({ message: 'CartItem deleted successfully', cartItem: existingCartItem });
       }
-    };
+    } catch (error) {
+      console.error('Error deleting CartItem:', error);
+      res.status(500).json({ message: 'Error deleting CartItem' });
+    }
+  }
+
 }
 
 export default new CartItemServices();

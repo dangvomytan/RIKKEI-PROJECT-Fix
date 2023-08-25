@@ -16,10 +16,10 @@ class ProductServices {
 
   getAllProVer = async (_req: Request, res: Response) => {
     try {
-      const result = await productModel.findAll({
+      const result = await versionModel.findAll({
         include: [
           {
-            model: versionModel,
+            model: productModel
           },
         ],
       });
@@ -93,6 +93,54 @@ class ProductServices {
       res.status(500).json({ message: 'Error deleting product' });
     }
   };
+
+  // fix
+
+  getAllInfoProByIdVer = async (req: Request, res: Response) => {
+    const{id}=req.params;
+    try {
+      //Lấy thông tin version theo id version
+      const version = await versionModel.findByPk(id);
+      if(!version)
+      {
+        res.status(404).json({ message: 'Not found' });
+      }
+      else
+      {
+        //Lấy thông tin bảng product và version
+        const product = await productModel.findOne({
+          where: {id: version.product_Id},
+          include: [
+            {
+              model: versionModel,
+            }]
+        });
+        if(!product)
+        {
+          res.status(404).json({ message: 'Not found' });
+        }
+        else
+        {
+          res.status(200).json({ ...version.dataValues, product });
+        }
+      }
+    } catch (error: any) {
+      console.log(error.message);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 export default new ProductServices();

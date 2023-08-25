@@ -6,6 +6,14 @@ class cartDetailController {
         cartServices.getAll(req, res);
     }
 
+    async cart_GetByUser(req: Request, res: Response) {
+        cartServices.getByUser(req, res);
+    }
+    
+    async cart_GetAllByUser(req: Request, res: Response) {
+        cartServices.getAllByUser(req, res);
+    }
+
     async cart_CreateItem(req: Request, res: Response) {
         cartServices.createItem(req, res);
     }
